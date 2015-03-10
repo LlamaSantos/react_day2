@@ -1,9 +1,22 @@
-var React = require('react');
-var SearchItunes = require('./SearchItunes');
-var Griddle = require('griddle-react');
+import React from 'react';
+import SearchItunes from './SearchItunes';
+import Griddle from 'griddle-react';
+import ImageComponent from './image-component';
+import UrlComponent from './url-component';
 
 var App = React.createClass({
-  render: function(){
+
+  getInitialState() {
+    return { data: [] };
+  },
+
+  updateState(data) {
+    this.setState({
+      data: data
+    });
+  },
+
+  render() {
     var griddleMeta = [
       {columnName: 'trackName',displayName: 'Name'},
       {columnName: 'artistName',displayName: 'Artist'},
@@ -12,22 +25,42 @@ var App = React.createClass({
       {columnName: 'trackPrice',displayName: 'Price'},{columnName: 'kind',displayName: 'Type'},
       {columnName: 'trackViewUrl',displayName: 'Online Link',customComponent: UrlComponent}
     ];
+
+    var columns = griddleMeta.reduce((arr, item) => {
+      return arr.concat(item.columnName);
+    }, []);
+
+    var styles = {
+      navbar : {
+        paddingTop: 7,
+        marginBottom: -1
+      }
+    };
+
     return (
       <span>
-        <div className="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div className="navbar navbar-default" role="navigation" style={styles.navbar}>
           <div className="container">
             <div className="row">
               <div className="col-sm-6">
-                /* SearchItunes goes here passing it updateState as cb */
+                <SearchItunes cb={this.updateState} />
               </div>
             </div>
           </div>
         </div>
         <div className="panel panel-default" >
           <div className="panel-heading">
-            /* Have this say "Make a Search" when the "data" state is an empty string and have it change to "Your Search Results" when it's not */
+            <span>
+              {this.state.data.length === 0 ? "Search for something" : "Your search results"}
+            </span>
           </div>
-          /* Griddle Component Goes Here */
+          <div className="panel-body">
+            <Griddle results={this.state.data}
+                     columnMetadata={griddleMeta}
+                     columns={columns}
+                     className="table"
+                     noDataMessage='' />
+          </div>
         </div>
       </span>
     )

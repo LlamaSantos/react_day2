@@ -5,7 +5,8 @@ module.exports = {
   },
   module: {
     loaders: [
-      {test: /\.js$/, loader: 'jsx-loader'}
+      {test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader?experimental&optional=runtime'}
     ]
   }
 };
+/*resovle root*/
